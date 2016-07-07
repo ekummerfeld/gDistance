@@ -1,0 +1,8 @@
+edu\cmu\tetrad\cli\validation\TabularContinuousDataTest.class
+edu\cmu\tetrad\cli\validation\UniqueVariableNamesTest.class
+edu\cmu\tetrad\cli\search\FgsApiExample.class
+edu\cmu\tetrad\cli\search\FgsCliTest.class
+edu\cmu\tetrad\cli\validation\NonZeroVarianceTest.class
+edu\cmu\tetrad\cli\search\FgsDiscreteTest.class
+edu\cmu\tetrad\cli\FilePrint.class
+edu\cmu\tetrad\cli\data\sim\DiscreteTabularDataTest.class
