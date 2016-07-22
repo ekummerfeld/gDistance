@@ -1,9 +1,14 @@
 package edu.cmu.tetrad.simulation;
 
+import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.graph.GraphUtils;
+import edu.cmu.tetrad.io.TabularContinuousDataReader;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -21,10 +26,28 @@ public class GdistanceApply {
         Graph graph2 = GraphUtils.loadGraphTxt(new File("images_graph_10sub_pd40_group2.txt"));
         long timegraph2 = System.nanoTime();
         System.out.println("Done loading second graph. Elapsed time: " + (timegraph2 - timegraph1)/1000000000 + "s");
+
+        //load the location map
+        String workingDirectory = System.getProperty("user.dir");
+        System.out.println(workingDirectory);
+        Path mapPath = Paths.get("erich_coordinates.txt");
+        System.out.println(mapPath);
+        edu.cmu.tetrad.io.DataReader dataReaderMap = new TabularContinuousDataReader(mapPath, ',');
+        try{
+        DataSet locationMap = dataReaderMap.readInData();
+
         System.out.println("Running Gdistance");
-        List<Double> distance = Gdistance.distances(graph1,graph2,"erich_coordinates.txt",',');
+        List<Double> distance = Gdistance.distances(graph1,graph2,locationMap);
         System.out.println(distance);
         System.out.println("Done running Distance. Elapsed time: " + (System.nanoTime() - timegraph2)/1000000000 + "s");
         System.out.println("Total elapsed time: " + (System.nanoTime() - timestart)/1000000000 + "s");
+
+            PrintWriter writer = new PrintWriter("Gdistances.txt", "UTF-8");
+            writer.println(distance);
+            writer.close();
+        }
+        catch(Exception IOException){
+            IOException.printStackTrace();
+        }
     }
 }

@@ -15,13 +15,11 @@ import java.util.List;
  * the distance between edges calculated this way is a true distance
  * the distance between two graphs is not a true distance because it is not symmetric
  */
-public class Gdistance {
+public class GdistanceVic {
 
     public static List<Double> distances(Graph graph1, Graph graph2, DataSet locationMap) {
-        //first, just impliment the brute force approach:
-        // compare every edge in graph1 to all in graph2
-        // for each edge in graph1, record the shortest distance to any edge in graph2
-        // return the list of shortest distances
+        //this impliments a less brute force approach, where edge comparisons are restricted
+        //to edges that are in the "vicinity" of the original edge
 
         double thisDistance = -1.0;
         double leastDistance = -1.0;
@@ -36,6 +34,9 @@ public class Gdistance {
         for (Edge edge1 : graph1.getEdges()) {
             //the variable "count" is used to initialize leastDistance to the first thisDistance
             count = 1;
+            //the next for loop gets restricted to edges in the vicinity of edge1
+            ArrayList<Edge> graph2edges = new ArrayList<>(graph2.getEdges());
+            Vicinity vicinity = new Vicinity(graph2edges,0,100,0,100,0,100);
             for (Edge edge2 : graph2.getEdges()) {
                 thisDistance = edgesDistance(edge1, edge2, locationMap);
                 //remember only the shortest distance seen
