@@ -34,13 +34,16 @@ public class GdistanceApply {
         System.out.println(mapPath);
         edu.cmu.tetrad.io.DataReader dataReaderMap = new TabularContinuousDataReader(mapPath, ',');
         try{
-        DataSet locationMap = dataReaderMap.readInData();
+            DataSet locationMap = dataReaderMap.readInData();
+            long timegraph3 = System.nanoTime();
+            System.out.println("Done loading location map. Elapsed time: " + (timegraph3 - timegraph2)/1000000000 + "s");
 
-        System.out.println("Running Gdistance");
-        List<Double> distance = Gdistance.distances(graph1,graph2,locationMap);
-        System.out.println(distance);
-        System.out.println("Done running Distance. Elapsed time: " + (System.nanoTime() - timegraph2)/1000000000 + "s");
-        System.out.println("Total elapsed time: " + (System.nanoTime() - timestart)/1000000000 + "s");
+            System.out.println("Running Gdistance");
+            //Make this either Gdistance or GdistanceVic
+            List<Double> distance = GdistanceVic.distances(graph1,graph2,locationMap);
+            System.out.println(distance);
+            System.out.println("Done running Distance. Elapsed time: " + (System.nanoTime() - timegraph3)/1000000000 + "s");
+            System.out.println("Total elapsed time: " + (System.nanoTime() - timestart)/1000000000 + "s");
 
             PrintWriter writer = new PrintWriter("Gdistances.txt", "UTF-8");
             writer.println(distance);

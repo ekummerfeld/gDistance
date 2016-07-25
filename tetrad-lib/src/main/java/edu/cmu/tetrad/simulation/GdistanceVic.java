@@ -35,9 +35,11 @@ public class GdistanceVic {
             //the variable "count" is used to initialize leastDistance to the first thisDistance
             count = 1;
             //the next for loop gets restricted to edges in the vicinity of edge1
+            //Using EK's adapted Vicinity2 instead, since it uses the normal type of edges
             ArrayList<Edge> graph2edges = new ArrayList<>(graph2.getEdges());
-            Vicinity vicinity = new Vicinity(graph2edges,0,100,0,100,0,100);
-            for (Edge edge2 : graph2.getEdges()) {
+            Vicinity2 vicinity = new Vicinity2(graph2edges,locationMap,0,100,0,100,0,100);
+            List<Edge> vicEdges = vicinity.getVicinity(edge1,locationMap);
+            for (Edge edge2 : vicEdges) {
                 thisDistance = edgesDistance(edge1, edge2, locationMap);
                 //remember only the shortest distance seen
                 if (count ==1) {
