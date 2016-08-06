@@ -2,6 +2,7 @@ package edu.cmu.tetrad.simulation;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Edge;
 import edu.cmu.tetrad.graph.Node;
+import edu.cmu.tetrad.graph.NodeEqualityMode;
 
 import java.util.*;
 
@@ -21,6 +22,7 @@ public class Vicinity2 {
     private Map<Integer, Set<Edge>> yCoords = new HashMap<>();
     private Map<Integer, Set<Edge>> zCoords = new HashMap<>();
 
+
     public Vicinity2(List<Edge> edges, DataSet locationMap, int xLow, int xHigh, int yLow, int yHigh, int zLow, int zHigh) {
         //EK: the xLow etc. ints are the bounds on the coordinates in the location space, I think
         this.xLow = xLow;
@@ -29,6 +31,8 @@ public class Vicinity2 {
         this.yHigh = yHigh;
         this.zLow = zLow;
         this.zHigh = zHigh;
+
+        NodeEqualityMode.setEqualityMode(NodeEqualityMode.Type.OBJECT);
 
         for (Edge edge : edges) {
             add(xCoords, edge, getX(edge.getNode1(), locationMap));
@@ -43,7 +47,7 @@ public class Vicinity2 {
 
     public List<Edge> getVicinity(Edge edge, DataSet locationMap) {
         Set<Edge> edges = new HashSet<>();
-
+        NodeEqualityMode.setEqualityMode(NodeEqualityMode.Type.OBJECT);
         //EK: I'm concerned that this won't actually remove many edges?
         //EK: since they only need one endpoint to be sorta close on ANY dimension
         //EK: this will carve out a thick 3D "+" shape and add every edge that touches it

@@ -30,14 +30,20 @@ public class GdistanceVic {
         graph1 = GraphUtils.replaceNodes(graph1,locationMap.getVariables());
         graph2 = GraphUtils.replaceNodes(graph2,locationMap.getVariables());
 
-        //This first for loop should be parallelized.
+        //constructing vicinity is costy, so do it just once, OUTSIDE the first for loop
+        //Using EK's adapted Vicinity2 instead, since it uses the normal type of edges
+        System.out.println("Constructing vicinity object");
+        long timevic1 = System.nanoTime();
+        ArrayList<Edge> graph2edges = new ArrayList<>(graph2.getEdges());
+        Vicinity2 vicinity = new Vicinity2(graph2edges,locationMap,0,100,0,100,0,100);
+        long timevic2 = System.nanoTime();
+        System.out.println("Done constructing vicinity object. Construction Time : " + (timevic2 - timevic1)/1000000000 + "s" );
+
+        //This first for loop should be parallelized in the future.
         for (Edge edge1 : graph1.getEdges()) {
             //the variable "count" is used to initialize leastDistance to the first thisDistance
             count = 1;
             //the next for loop gets restricted to edges in the vicinity of edge1
-            //Using EK's adapted Vicinity2 instead, since it uses the normal type of edges
-            ArrayList<Edge> graph2edges = new ArrayList<>(graph2.getEdges());
-            Vicinity2 vicinity = new Vicinity2(graph2edges,locationMap,0,100,0,100,0,100);
             List<Edge> vicEdges = vicinity.getVicinity(edge1,locationMap);
             for (Edge edge2 : vicEdges) {
                 thisDistance = edgesDistance(edge1, edge2, locationMap);
