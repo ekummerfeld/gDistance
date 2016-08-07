@@ -44,6 +44,7 @@ public class GdistanceRandom {
         int numVars=locationMap.getNumColumns();
         if (verbose) System.out.println("generating pair of random dags");
         Graph dag1 = GraphUtils.randomGraphRandomForwardEdges(locationMap.getVariables(),0, numEdges1, numVars,numVars,numVars, false, false);
+        if (verbose) System.out.println(dag1);
         Graph dag2 = GraphUtils.randomGraphRandomForwardEdges(locationMap.getVariables(),0, numEdges2, numVars,numVars,numVars, false, false);
 
         //convert those dags to patterns
