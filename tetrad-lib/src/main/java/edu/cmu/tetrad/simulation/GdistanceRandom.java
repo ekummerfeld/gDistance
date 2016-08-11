@@ -4,6 +4,7 @@ import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.search.DagToPattern;
+import edu.cmu.tetrad.search.SearchGraphUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +50,8 @@ public class GdistanceRandom {
 
         //convert those dags to patterns
         if (verbose) System.out.println("converting dags to patterns");
-        DagToPattern converter1 = new DagToPattern(dag1);
-        Graph graph1 = converter1.convert();
-        DagToPattern converter2 = new DagToPattern(dag2);
-        Graph graph2 = converter2.convert();
+        Graph graph1 = SearchGraphUtils.patternFromDag(dag1);
+        Graph graph2 = SearchGraphUtils.patternFromDag(dag2);
 
         //run Gdistance on these two graphs
         if (verbose) System.out.println("running Gdistance on the patterns");
