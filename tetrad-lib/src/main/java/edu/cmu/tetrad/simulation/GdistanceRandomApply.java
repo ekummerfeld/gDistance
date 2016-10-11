@@ -15,12 +15,7 @@ public class GdistanceRandomApply {
     public static void main (String... args) {
         //thresholds are the barriers between histogram buckets.
         double[] thresholds;
-        thresholds = new double[5];
-        thresholds[0]=0;
-        thresholds[1]=2;
-        thresholds[2]=4;
-        thresholds[3]=6;
-        thresholds[4]=8;
+        thresholds = new double[]{0,2,4,6,8};
         //load the location map
         String workingDirectory = System.getProperty("user.dir");
         System.out.println(workingDirectory);
