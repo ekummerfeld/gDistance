@@ -156,8 +156,12 @@ public class Vicinity4 {
 
             //** Since edge is directed, node1edges2 is NOT allowed to contain directed edges
             //it's okay if the edges in node1edges2 are unidrected, though
-            for (Edge thisedge : node1edges2){
-                if (thisedge.isDirected()) node1edges2.remove(thisedge);
+            if (!node1edges2.isEmpty()){
+                List<Edge> edges12 = new ArrayList<>(node1edges2);
+                for (Edge thisedge : edges12){
+                    if (thisedge.isDirected()) node1edges2.remove(thisedge);
+                }
+
             }
 
             int x2 = getX(edge.getNode2(), locationMap);
