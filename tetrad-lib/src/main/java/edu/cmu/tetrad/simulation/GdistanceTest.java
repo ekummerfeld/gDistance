@@ -38,7 +38,7 @@ public class GdistanceTest {
         try{
             DataSet locationMap = dataReaderMap.readInData();
             //then compare their distance
-            List<Double> output = GdistanceVic.distances(testdag1, testdag2, locationMap);
+            List<Double> output = Gdistance5.distances(testdag1, testdag2, locationMap);
 
             System.out.println(output);
         }
