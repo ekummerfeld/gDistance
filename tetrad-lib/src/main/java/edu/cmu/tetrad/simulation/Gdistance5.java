@@ -17,9 +17,10 @@ import java.util.List;
  */
 public class Gdistance5 {
 
-    public static List<Double> distances(Graph graph1, Graph graph2, DataSet locationMap) {
+    public static List<Double> distances(Graph graph1, Graph graph2, DataSet locationMap,
+                                         double xDist, double yDist, double zDist) {
         //compared to GdistanceVic, Gdistance5 needs to calculate distances for non-cubic voxels.
-        //dimensions along each dimension should be given as input. in the constructor: xdist, ydist, zdist
+        //dimensions along each dimension should be given as input: xdist, ydist, zdist
         //this impliments a less brute force approach, where edge comparisons are restricted
         //to edges that are in the "vicinity" of the original edge
 
@@ -38,7 +39,7 @@ public class Gdistance5 {
         System.out.println("Constructing vicinity object");
         long timevic1 = System.nanoTime();
         ArrayList<Edge> graph2edges = new ArrayList<>(graph2.getEdges());
-        Vicinity5 vicinity = new Vicinity5(graph2edges,locationMap,0,100,0,100,0,100,2,2,2.6);
+        Vicinity5 vicinity = new Vicinity5(graph2edges,locationMap,0,100,0,100,0,100,xDist,yDist,zDist);
         long timevic2 = System.nanoTime();
         System.out.println("Done constructing vicinity object. Construction Time : " + (timevic2 - timevic1)/1000000000 + "s" );
 
@@ -49,10 +50,10 @@ public class Gdistance5 {
             //the variable "count" is used to initialize leastDistance to the first thisDistance
             count = 1;
             //the next for loop gets restricted to edges in the vicinity of edge1
-            List<Edge> vicEdges = vicinity.getVicinity(edge1,1);
+            List<Edge> vicEdges = vicinity.getVicinity(edge1,2);
             //System.out.println(vicEdges);
             for (Edge edge2 : vicEdges) {
-                thisDistance = edgesDistance(edge1, edge2, locationMap);
+                thisDistance = edgesDistance(edge1, edge2, locationMap,xDist,yDist,zDist);
                 //remember only the shortest distance seen
                 if (count ==1) {
                     leastDistance = thisDistance;
@@ -72,7 +73,7 @@ public class Gdistance5 {
 
     //////======***PRIVATE METHODS BELOW *****=====/////
 
-    private static double nodesDistance(Node node1, Node node2, DataSet locationMap) {
+    private static double nodesDistance(Node node1, Node node2, DataSet locationMap, double x, double y, double z) {
         //calculate distance between two nodes based on their locations
         //simple starter is simply the taxicab distance:
         //calc differences in X, Y, and Z axis, then sum them together.
@@ -92,12 +93,13 @@ public class Gdistance5 {
         //taxicab distance
         //double taxicab = Math.abs(value11 - value21) + Math.abs(value12 - value22) + Math.abs(value13 - value23);
         //euclidian distance instead of taxicab
-        double euclid = Math.sqrt((value11 - value21)*(value11 - value21)+(value12 - value22)*(value12 - value22)+(value13 - value23)*(value13 - value23) );
+        double euclid = Math.sqrt((value11 - value21)*x*(value11 - value21)*x+(value12 - value22)*y*
+                (value12 - value22)*y+(value13 - value23)*z*(value13 - value23)*z );
 
         return euclid;
     }
 
-    private static double edgesDistance(Edge edge1, Edge edge2, DataSet locationMap) {
+    private static double edgesDistance(Edge edge1, Edge edge2, DataSet locationMap, double xD, double yD, double zD) {
         //calculate distance between two edges based on distances of their endpoints
         //if both edges are directed, then:
         //compare edge1 head to edge2 head, tail to tail.
@@ -110,8 +112,8 @@ public class Gdistance5 {
             Node edge2h = Edges.getDirectedEdgeHead(edge2);
             Node edge2t = Edges.getDirectedEdgeTail(edge2);
             //compare tail to tail
-            double tDistance = nodesDistance(edge1t, edge2t, locationMap);
-            double hDistance = nodesDistance(edge1h, edge2h, locationMap);
+            double tDistance = nodesDistance(edge1t, edge2t, locationMap,xD,yD,zD);
+            double hDistance = nodesDistance(edge1h, edge2h, locationMap,xD,yD,zD);
             return tDistance + hDistance;
         }
         else {
@@ -124,12 +126,12 @@ public class Gdistance5 {
             Node node22 = edge2.getNode2();
 
             //first compare node1 to node1 and node2 to node2
-            double dist11 = nodesDistance(node11, node21, locationMap);
-            double dist22 = nodesDistance(node12, node22, locationMap);
+            double dist11 = nodesDistance(node11, node21, locationMap,xD,yD,zD);
+            double dist22 = nodesDistance(node12, node22, locationMap,xD,yD,zD);
 
             //then compare node1 to node2 and node2 to node1
-            double dist12 = nodesDistance(node11, node22, locationMap);
-            double dist21 = nodesDistance(node12, node21, locationMap);
+            double dist12 = nodesDistance(node11, node22, locationMap,xD,yD,zD);
+            double dist21 = nodesDistance(node12, node21, locationMap,xD,yD,zD);
 
             //then return the minimum of the two ways of pairing nodes from each edge
             return Math.min(dist11 + dist22, dist12 + dist21);
