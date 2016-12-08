@@ -40,7 +40,12 @@ public class GdistanceApply {
 
             System.out.println("Running Gdistance");
             //Make this either Gdistance or GdistanceVic
-            List<Double> distance = GdistanceVic.distances(graph1,graph2,locationMap);
+            double xdist = 2.4;
+            double ydist = 2.4;
+            double zdist = 2;
+            //using Gdistance5P now, for non cube voxels and parallel code
+            Gdistance5P gdist = new Gdistance5P(locationMap,xdist,ydist,zdist);
+            List<Double> distance = gdist.distances(graph1,graph2);
             System.out.println(distance);
             System.out.println("Done running Distance. Elapsed time: " + (System.nanoTime() - timegraph3)/1000000000 + "s");
             System.out.println("Total elapsed time: " + (System.nanoTime() - timestart)/1000000000 + "s");

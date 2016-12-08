@@ -171,13 +171,19 @@ public class Vicinity5 {
         while (edges.isEmpty()){
             //increment range by chunk
             range += chunksize;
+
+            //create separate range values for x y and z, scaled by xdist ydist zdist
+            int xrange = (int) Math.ceil(range/xDist);
+            int yrange = (int) Math.ceil(range/yDist);
+            int zrange = (int) Math.ceil(range/zDist);
+
             //initialize the edge sets
             Set<Edge> node1edges1 = new HashSet<>();
             Set<Edge> node1edges2 = new HashSet<>();
             //list edges with either endpoint near node1
-            for (int x = getX(edge.getNode1(), locationMap) - range; x <= getX(edge.getNode1(), locationMap) + range; x++) {
-                for (int y = getY(edge.getNode1(), locationMap) - range; y <= getY(edge.getNode1(), locationMap) + range; y++) {
-                    for (int z = getZ(edge.getNode1(), locationMap) - range; z <= getZ(edge.getNode1(), locationMap) + range; z++) {
+            for (int x = getX(edge.getNode1(), locationMap) - xrange; x <= getX(edge.getNode1(), locationMap) + xrange; x++) {
+                for (int y = getY(edge.getNode1(), locationMap) - yrange; y <= getY(edge.getNode1(), locationMap) + yrange; y++) {
+                    for (int z = getZ(edge.getNode1(), locationMap) - zrange; z <= getZ(edge.getNode1(), locationMap) + zrange; z++) {
                         if (x < xLow || x > xHigh || y < yLow || y > yHigh || z < zLow || z > zHigh) continue;
                         if (Coords1.get(Arrays.asList(x,y,z)) != null) node1edges1.addAll(Coords1.get(Arrays.asList(x,y,z)));
                         if (Coords2.get(Arrays.asList(x,y,z)) != null) node1edges2.addAll(Coords2.get(Arrays.asList(x,y,z)));
@@ -204,7 +210,7 @@ public class Vicinity5 {
                     int x = getX(edge11.getNode2(), locationMap);
                     int y = getY(edge11.getNode2(), locationMap);
                     int z = getZ(edge11.getNode2(), locationMap);
-                    if (x >= x2 - range && x <= x2 + range && y >= y2 - range && y <= y2 + range && z >= z2 - range && z <= z2 + range){
+                    if (x >= x2 - xrange && x <= x2 + xrange && y >= y2 - yrange && y <= y2 + yrange && z >= z2 - zrange && z <= z2 + zrange){
                         edges.add(edge11);
                     }
                 }
@@ -214,7 +220,7 @@ public class Vicinity5 {
                     int x = getX(edge12.getNode1(), locationMap);
                     int y = getY(edge12.getNode1(), locationMap);
                     int z = getZ(edge12.getNode1(), locationMap);
-                    if (x >= x2 - range && x <= x2 + range && y >= y2 - range && y <= y2 + range && z >= z2 - range && z <= z2 + range){
+                    if (x >= x2 - xrange && x <= x2 + xrange && y >= y2 - yrange && y <= y2 + yrange && z >= z2 - zrange && z <= z2 + zrange){
                         edges.add(edge12);
                     }
                 }
@@ -230,14 +236,18 @@ public class Vicinity5 {
     private List<Edge> findEdges(Edge edge, int range){
         Set<Edge> edges = new HashSet<>();
         NodeEqualityMode.setEqualityMode(NodeEqualityMode.Type.OBJECT);
+        //create separate range values for x y and z, scaled by xdist ydist zdist
+        int xrange = (int) Math.ceil(range/xDist);
+        int yrange = (int) Math.ceil(range/yDist);
+        int zrange = (int) Math.ceil(range/zDist);
 
         //initialize the edge sets
         Set<Edge> node1edges1 = new HashSet<>();
         Set<Edge> node1edges2 = new HashSet<>();
         //list edges with either endpoint near node1
-        for (int x = getX(edge.getNode1(), locationMap) - range; x <= getX(edge.getNode1(), locationMap) + range; x++) {
-            for (int y = getY(edge.getNode1(), locationMap) - range; y <= getY(edge.getNode1(), locationMap) + range; y++) {
-                for (int z = getZ(edge.getNode1(), locationMap) - range; z <= getZ(edge.getNode1(), locationMap) + range; z++) {
+        for (int x = getX(edge.getNode1(), locationMap) - xrange; x <= getX(edge.getNode1(), locationMap) + xrange; x++) {
+            for (int y = getY(edge.getNode1(), locationMap) - yrange; y <= getY(edge.getNode1(), locationMap) + yrange; y++) {
+                for (int z = getZ(edge.getNode1(), locationMap) - zrange; z <= getZ(edge.getNode1(), locationMap) + zrange; z++) {
                     if (x < xLow || x > xHigh || y < yLow || y > yHigh || z < zLow || z > zHigh) continue;
                     //if (Coords1.get(new Integer[] {x,y,z}) == null) continue;
                     if (Coords1.get(Arrays.asList(x,y,z)) != null) node1edges1.addAll(Coords1.get(Arrays.asList(x,y,z)));
@@ -254,7 +264,7 @@ public class Vicinity5 {
                 int x = getX(edge11.getNode2(), locationMap);
                 int y = getY(edge11.getNode2(), locationMap);
                 int z = getZ(edge11.getNode2(), locationMap);
-                if (x >= x2 - range && x <= x2 + range && y >= y2 - range && y <= y2 + range && z >= z2 - range && z <= z2 + range){
+                if (x >= x2 - xrange && x <= x2 + xrange && y >= y2 - yrange && y <= y2 + yrange && z >= z2 - zrange && z <= z2 + zrange){
                     edges.add(edge11);
                 }
             }
@@ -264,7 +274,7 @@ public class Vicinity5 {
                 int x = getX(edge12.getNode1(), locationMap);
                 int y = getY(edge12.getNode1(), locationMap);
                 int z = getZ(edge12.getNode1(), locationMap);
-                if (x >= x2 - range && x <= x2 + range && y >= y2 - range && y <= y2 + range && z >= z2 - range && z <= z2 + range){
+                if (x >= x2 - xrange && x <= x2 + xrange && y >= y2 - yrange && y <= y2 + yrange && z >= z2 - zrange && z <= z2 + zrange){
                     edges.add(edge12);
                 }
             }

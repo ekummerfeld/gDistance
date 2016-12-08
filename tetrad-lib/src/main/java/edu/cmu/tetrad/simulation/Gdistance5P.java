@@ -2,9 +2,12 @@ package edu.cmu.tetrad.simulation;
 
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.*;
+import edu.cmu.tetrad.util.ForkJoinPoolInstance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
 /**
  * Created by Erich on 7/3/2016.
@@ -14,19 +17,31 @@ import java.util.List;
  * the distance between two edges is calculated as the distance between their endpoints
  * the distance between edges calculated this way is a true distance
  * the distance between two graphs is not a true distance because it is not symmetric
+ * the 5P version allows for non-cubic voxels, and parallelizes the most expensive loop
  */
-public class Gdistance5 {
+public class Gdistance5P {
 
-    public static List<Double> distances(Graph graph1, Graph graph2, DataSet locationMap,
-                                         double xDist, double yDist, double zDist) {
+    private DataSet locationMap;
+    private double xDist;
+    private double yDist;
+    private double zDist;
+
+    private int chunksize = 2;
+
+    //With the parallel version, it is better to make a constructor for central data like locationMap
+    public Gdistance5P(DataSet locationMap, double xDist, double yDist, double zDist){
+        this.locationMap = locationMap;
+        this.xDist=xDist;
+        this.yDist=yDist;
+        this.zDist=zDist;
+    }
+
+    public List<Double> distances(Graph graph1, Graph graph2) {
         //compared to GdistanceVic, Gdistance5 needs to calculate distances for non-cubic voxels.
         //dimensions along each dimension should be given as input: xdist, ydist, zdist
         //this impliments a less brute force approach, where edge comparisons are restricted
         //to edges that are in the "vicinity" of the original edge
 
-        double thisDistance = -1.0;
-        double leastDistance = -1.0;
-        int count = 1;
         List<Double> leastList = new ArrayList<>();
         //System.out.println(locationMap);
         // Make *SURE* that the graph nodes are the same as the location nodes
@@ -46,13 +61,41 @@ public class Gdistance5 {
         //This first for loop should be parallelized in the future.
         //let the for loop do its thing, and create a new thread for each task inside of it.
         int edgetracker=1;
+        ForkJoinPool pool = ForkJoinPoolInstance.getInstance().getPool();
         for (Edge edge1 : graph1.getEdges()) {
             System.out.println("edge#"+edgetracker); edgetracker++;
             //the above should probably be left, everything below should be turned into a recursive task
+            // for each choice we will create a task that will run on a separate thread
+            pool.invoke(new FindLeastDistanceTask(leastList, vicinity, edge1));
+
+        }
+        return leastList;
+    }
+
+    //////+++++******* Method used in multithread task
+    class FindLeastDistanceTask extends RecursiveTask<Boolean> {
+
+        List<Double> leastList;
+        Vicinity5 vicinity;
+        Edge edge1;
+
+
+        public FindLeastDistanceTask(final List<Double> leastList, final Vicinity5 vicinity, final Edge edge1) {
+            this.leastList = leastList;
+            this.vicinity = vicinity;
+            this.edge1=edge1;
+
+        }
+
+        @Override
+        protected Boolean compute() {
+
             //the variable "count" is used to initialize leastDistance to the first thisDistance
-            count = 1;
+            int count = 1;
+            double thisDistance;
+            double leastDistance = -1.0;
             //the next for loop gets restricted to edges in the vicinity of edge1
-            List<Edge> vicEdges = vicinity.getVicinity(edge1,2);
+            List<Edge> vicEdges = vicinity.getVicinity(edge1,chunksize);
             //System.out.println(vicEdges);
             for (Edge edge2 : vicEdges) {
                 thisDistance = edgesDistance(edge1, edge2, locationMap,xDist,yDist,zDist);
@@ -68,8 +111,9 @@ public class Gdistance5 {
             }
             //add it to a list of the leastDistances
             leastList.add(leastDistance);
+
+            return true;
         }
-        return leastList;
     }
 
     //////======***PRIVATE METHODS BELOW *****=====/////

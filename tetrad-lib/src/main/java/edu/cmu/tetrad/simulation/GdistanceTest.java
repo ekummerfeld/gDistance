@@ -41,7 +41,8 @@ public class GdistanceTest {
             double xdist = 2.4;
             double ydist = 2.4;
             double zdist = 2;
-            List<Double> output = Gdistance5.distances(testdag1, testdag2, locationMap, xdist,ydist,zdist);
+            Gdistance5P gdist = new Gdistance5P(locationMap,xdist,ydist,zdist);
+            List<Double> output = gdist.distances(testdag1, testdag2);
 
             System.out.println(output);
         }
